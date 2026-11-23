@@ -1,0 +1,21 @@
+{
+  "name": "gerenciador-de-tarefas",
+  "version": "1.0.0",
+  "description": "projeto pessoal POO 4°bim",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aristides66/gerenciador-de-tarefas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Aristides66/gerenciador-de-tarefas/issues"
+  },
+  "homepage": "https://github.com/Aristides66/gerenciador-de-tarefas#readme"
+}
