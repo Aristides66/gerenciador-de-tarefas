@@ -1,20 +1,12 @@
-const fs = require("fs/promises")
-const readline = require("readline")
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
+const fs = require("fs")
+const prompt = require("prompt-sync")()
 
 const ARQUIVO = process.env.ARQUIVO_TAREFAS || "tarefas.json"
 
-function perguntar(texto) {
-    return new Promise(resolve => rl.question(texto, resolve))
-}
-
-async function listar() {
+function listar() {
     try {
-        const dados = await fs.readFile(ARQUIVO, "utf-8")
+        const dados = fs.readFileSync(ARQUIVO, "utf-8")
         return JSON.parse(dados)
     } catch (erro) {
         if (erro.code === "ENOENT") return []
@@ -22,12 +14,12 @@ async function listar() {
     }
 }
 
-async function gravar(tarefas) {
-    await fs.writeFile(ARQUIVO, JSON.stringify(tarefas, null, 2))
+function gravar(tarefas) {
+    fs.writeFileSync(ARQUIVO, JSON.stringify(tarefas, null, 2))
 }
 
-async function salvar(nome) {
-    const tarefas = await listar()
+function salvar(nome) {
+    const tarefas = listar()
 
     const novaTarefa = {
         nome,
@@ -35,19 +27,19 @@ async function salvar(nome) {
     }
 
     tarefas.push(novaTarefa)
-    await gravar(tarefas)
+    gravar(tarefas)
 
     return novaTarefa
 }
 
-async function buscar(nome) {
-    const tarefas = await listar()
+function buscar(nome) {
+    const tarefas = listar()
 
     return tarefas.find(tarefa => tarefa.nome.toLowerCase() === nome.toLowerCase()) || null
 }
 
-async function concluir(nome) {
-    const tarefas = await listar()
+function concluir(nome) {
+    const tarefas = listar()
 
     const tarefa = tarefas.find(tarefa => tarefa.nome.toLowerCase() === nome.toLowerCase())
 
@@ -55,24 +47,24 @@ async function concluir(nome) {
 
     tarefa.concluida = true
 
-    await gravar(tarefas)
+    gravar(tarefas)
 
     return tarefa
 }
 
-async function remover(nome) {
-    const tarefas = await listar()
+function remover(nome) {
+    const tarefas = listar()
 
     const novaLista = tarefas.filter(tarefa => tarefa.nome.toLowerCase() !== nome.toLowerCase())
 
     if (novaLista.length === tarefas.length) return false
 
-    await gravar(novaLista)
+    gravar(novaLista)
 
     return true
 }
 
-async function iniciar() {
+function iniciar() {
     let opcao = ""
 
     while (opcao !== "0") {
@@ -84,21 +76,21 @@ async function iniciar() {
         console.log("5 - Remover tarefa")
         console.log("0 - Sair")
 
-        opcao = await perguntar("\nEscolha uma opção: ")
+        opcao = prompt("\nEscolha uma opção: ")
 
         if (opcao === "1") {
-            const nome = await perguntar("Nome da tarefa: ")
+            const nome = prompt("Nome da tarefa: ")
 
             if (!nome.trim()) {
                 console.log("Digite um nome válido!")
                 continue
             }
 
-            await salvar(nome)
+            salvar(nome)
             console.log("Tarefa cadastrada!")
 
         } else if (opcao === "2") {
-            const tarefas = await listar()
+            const tarefas = listar()
 
             if (tarefas.length === 0) {
                 console.log("Nenhuma tarefa cadastrada!")
@@ -109,20 +101,20 @@ async function iniciar() {
             }
 
         } else if (opcao === "3") {
-            const nome = await perguntar("Digite o nome da tarefa: ")
-            const tarefa = await buscar(nome)
+            const nome = prompt("Digite o nome da tarefa: ")
+            const tarefa = buscar(nome)
 
             console.log(tarefa || "Tarefa não encontrada!")
 
         } else if (opcao === "4") {
-            const nome = await perguntar("Digite o nome da tarefa: ")
-            const tarefa = await concluir(nome)
+            const nome = prompt("Digite o nome da tarefa: ")
+            const tarefa = concluir(nome)
 
             console.log(tarefa ? "Tarefa concluída!" : "Tarefa não encontrada!")
 
         } else if (opcao === "5") {
-            const nome = await perguntar("Digite o nome da tarefa: ")
-            const resultado = await remover(nome)
+            const nome = prompt("Digite o nome da tarefa: ")
+            const resultado = remover(nome)
 
             console.log(resultado ? "Tarefa removida!" : "Tarefa não encontrada!")
 
@@ -133,13 +125,12 @@ async function iniciar() {
             console.log("Opção inválida!")
         }
     }
-
-    rl.close()
 }
 
-iniciar().catch(erro => {
+try {
+    iniciar()
+} catch (erro) {
     console.error("Erro:", erro.message)
-    rl.close()
-})
+}
 
 module.exports = { listar, salvar, buscar, concluir, remover }

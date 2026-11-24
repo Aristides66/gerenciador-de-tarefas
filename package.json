@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Aristides66/gerenciador-de-tarefas/issues"
   },
-  "homepage": "https://github.com/Aristides66/gerenciador-de-tarefas#readme"
+  "homepage": "https://github.com/Aristides66/gerenciador-de-tarefas#readme",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
 }
